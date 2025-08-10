@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import  { useEffect, useMemo, useState } from "react";
 
 type Entry = { id: number; name: string; score: number; date?: string };
 
