@@ -1,132 +1,108 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
-type Player = {
-  name: string;
-  score: number;
-};
+type Entry = { id: number; name: string; score: number; date?: string };
 
-export default function LeaderboardPage() {
-  const [leaderboard, setLeaderboard] = useState<Player[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+export default function Leaderboard() {
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 
-  // Load leaderboard from localStorage on mount
+  // load entries from localStorage once
   useEffect(() => {
-    const stored = localStorage.getItem("leaderboard");
-    if (stored) {
-      setLeaderboard(JSON.parse(stored));
-    }
+    const raw = localStorage.getItem("leaderboard");
+    const arr: Entry[] = raw ? JSON.parse(raw) : [];
+    setEntries(arr);
   }, []);
 
-  // Save leaderboard to localStorage whenever it changes
+  // persist to localStorage whenever entries change
   useEffect(() => {
-    localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
-  }, [leaderboard]);
+    localStorage.setItem("leaderboard", JSON.stringify(entries));
+  }, [entries]);
 
-  // Delete a single player by index
-  function deletePlayer(index: number) {
-    setLeaderboard((prev) => prev.filter((_, i) => i !== index));
+  function handleDelete(id: number) {
+    if (!confirm("Delete this player?")) return;
+    setEntries((prev) => prev.filter((e) => e.id !== id));
   }
 
-  // Clear entire leaderboard
-  function clearLeaderboard() {
-    if (
-      window.confirm("Are you sure you want to clear the entire leaderboard?")
-    ) {
-      setLeaderboard([]);
-    }
+  function handleClearAll() {
+    if (!confirm("Clear entire leaderboard?")) return;
+    setEntries([]);
   }
 
-  // Filter leaderboard by search term (case-insensitive)
-  const filtered = leaderboard.filter((player) =>
-    player.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Sort filtered leaderboard by score according to sortOrder
-  filtered.sort((a, b) =>
-    sortOrder === "desc" ? b.score - a.score : a.score - b.score
-  );
+  // filtered + sorted list
+  const visible = useMemo(() => {
+    const lower = search.trim().toLowerCase();
+    const filtered = entries.filter((e) =>
+      e.name.toLowerCase().includes(lower)
+    );
+    const sorted = filtered
+      .slice()
+      .sort((a, b) =>
+        sortOrder === "desc" ? b.score - a.score : a.score - b.score
+      );
+    return sorted;
+  }, [entries, search, sortOrder]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6">Leaderboard</h1>
-
-      {/* Search input */}
-      <input
-        type="text"
-        placeholder="Search player by name..."
-        className="border rounded px-3 py-2 mb-4 w-full max-w-md"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-
-      {/* Sort buttons */}
-      <div className="mb-4">
-        <button
-          onClick={() => setSortOrder("desc")}
-          className={`px-4 py-2 mr-2 rounded ${
-            sortOrder === "desc" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-        >
-          Sort: Highest to Lowest
-        </button>
-        <button
-          onClick={() => setSortOrder("asc")}
-          className={`px-4 py-2 rounded ${
-            sortOrder === "asc" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-        >
-          Sort: Lowest to Highest
-        </button>
+    <div className="max-w-3xl mx-auto">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">Leaderboard</h2>
+        <div className="flex gap-2">
+          <button
+            onClick={handleClearAll}
+            className="bg-red-600 text-white px-3 py-1 rounded"
+          >
+            Clear All
+          </button>
+        </div>
       </div>
 
-      {/* Clear leaderboard button */}
-      <button
-        onClick={clearLeaderboard}
-        className="mb-6 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-      >
-        Clear Leaderboard
-      </button>
+      <div className="mb-4 flex gap-3">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by name..."
+          className="border rounded px-3 py-2 flex-1"
+        />
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value as "desc" | "asc")}
+          className="border rounded px-3 py-2"
+        >
+          <option value="desc">Highest → Lowest</option>
+          <option value="asc">Lowest → Highest</option>
+        </select>
+      </div>
 
-      {/* Leaderboard table */}
-      <table className="table-auto border-collapse border border-gray-300 w-full max-w-lg">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 px-4 py-2">Player Name</th>
-            <th className="border border-gray-300 px-4 py-2">Score</th>
-            <th className="border border-gray-300 px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtered.length === 0 ? (
-            <tr>
-              <td colSpan={3} className="text-center py-4 text-gray-500">
-                No players found.
-              </td>
-            </tr>
-          ) : (
-            filtered.map((player, index) => (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="border border-gray-300 px-4 py-2">
-                  {player.name}
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  {player.score}
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  <button
-                    onClick={() => deletePlayer(index)}
-                    className="text-red-600 hover:underline"
-                    aria-label={`Delete ${player.name}`}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      <div className="bg-white rounded shadow overflow-hidden">
+        <div className="grid grid-cols-12 gap-2 px-4 py-2 bg-gray-50 text-sm text-slate-600 border-b">
+          <div className="col-span-6">Name</div>
+          <div className="col-span-3">Score</div>
+          <div className="col-span-3 text-right">Actions</div>
+        </div>
+
+        {visible.length === 0 ? (
+          <div className="p-6 text-center text-slate-500">No results</div>
+        ) : (
+          visible.map((e) => (
+            <div
+              key={e.id}
+              className="grid grid-cols-12 gap-2 px-4 py-3 items-center border-b"
+            >
+              <div className="col-span-6 font-medium">{e.name}</div>
+              <div className="col-span-3">{e.score}</div>
+              <div className="col-span-3 text-right">
+                <button
+                  onClick={() => handleDelete(e.id)}
+                  className="px-3 py-1 bg-red-500 text-white rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }

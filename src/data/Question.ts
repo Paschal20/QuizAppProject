@@ -1,12 +1,11 @@
-// You can move this to a separate file if you want, but for now we keep it here
 export type QuestionItem = {
   id: number;
   question: string;
   options: string[];
-  correct: string;
+  correct: string; // the text of the correct option
 };
 
-const QUESTIONS: QuestionItem[] = [
+export const QUESTIONS: QuestionItem[] = [
   {
     id: 1,
     question: "What is 2 + 2?",
@@ -27,10 +26,8 @@ const QUESTIONS: QuestionItem[] = [
   },
   {
     id: 4,
-    question: "4 * 3 = ?",
+    question: "What is 4 * 3?",
     options: ["12", "14", "9", "11"],
     correct: "12",
   },
 ];
-
-export default QUESTIONS;
