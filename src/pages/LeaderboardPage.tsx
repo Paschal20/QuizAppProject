@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 type Player = {
   name: string;
   score: number;
 };
 
 export default function LeaderboardPage() {
+  const locate = useNavigate();
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
-
+  const homePage = () => {
+    locate("/");
+  };
   // Load leaderboard from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem("leaderboard");
@@ -64,7 +67,7 @@ export default function LeaderboardPage() {
       <div className="mb-4">
         <button
           onClick={() => setSortOrder("desc")}
-          className={`px-4 py-2 mr-2 rounded ${
+          className={`px-4 py-2 mr-2 rounded cursor-pointer ${
             sortOrder === "desc" ? "bg-blue-500 text-white" : "bg-gray-200"
           }`}
         >
@@ -72,7 +75,7 @@ export default function LeaderboardPage() {
         </button>
         <button
           onClick={() => setSortOrder("asc")}
-          className={`px-4 py-2 rounded ${
+          className={`px-4 py-2 rounded cursor-pointer ${
             sortOrder === "asc" ? "bg-blue-500 text-white" : "bg-gray-200"
           }`}
         >
@@ -83,9 +86,16 @@ export default function LeaderboardPage() {
       {/* Clear leaderboard button */}
       <button
         onClick={clearLeaderboard}
-        className="mb-6 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+        className="mb-6 px-4 py-2 bg-red-800 text-white rounded cursor-pointer hover:bg-red-600"
       >
         Clear Leaderboard
+      </button>
+      {/* Back to homePage*/}
+      <button
+        onClick={homePage}
+        className=" bg-green-800 py-2 mb-10 rounded cursor-pointer hover:bg-green-600 text-white px-8"
+      >
+        Back to Home
       </button>
 
       {/* Leaderboard table */}
