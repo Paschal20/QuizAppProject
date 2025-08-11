@@ -114,7 +114,8 @@ export default function QuizPage() {
   const currentQuestion = QUESTIONS[state.index];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-500 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white
+     p-4">
       <h2 className="text-xl mb-2">Time: {time}s</h2>
       <h1 className="text-2xl mb-4 text-center">{currentQuestion.question}</h1>
 
