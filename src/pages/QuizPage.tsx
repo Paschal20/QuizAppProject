@@ -114,7 +114,8 @@ export default function QuizPage() {
   const currentQuestion = QUESTIONS[state.index];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-500 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white
+     p-4">
       <h2 className="text-xl mb-2">Time: {time}s</h2>
       <h1 className="text-2xl mb-4 text-center">{currentQuestion.question}</h1>
 
@@ -122,8 +123,10 @@ export default function QuizPage() {
         {currentQuestion.options.map((option, idx) => (
           <button
             key={idx}
+            type="button"
             className="border px-4 py-2 m-1 rounded hover:bg-gray-200"
-            onClick={() => {
+            onClick={(event) => {
+              event.preventDefault();
               dispatch({
                 type: "ANSWER",
                 correct: option === currentQuestion.correct,
@@ -135,7 +138,6 @@ export default function QuizPage() {
           </button>
         ))}
       </form>
-      
     </div>
   );
 }

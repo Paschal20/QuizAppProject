@@ -6,11 +6,12 @@ export default function StartPage() {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    if (!name.trim()) return;
+    if (!name.trim()) return alert("Please input your name");
     localStorage.setItem("currentUser", JSON.stringify({ name }));
     navigate("/quiz");
   };
-
+  // this is a return
+  // this is naomi changes
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-3xl font-bold mb-6">Mini Quiz Game</h1>
