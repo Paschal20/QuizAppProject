@@ -122,8 +122,10 @@ export default function QuizPage() {
         {currentQuestion.options.map((option, idx) => (
           <button
             key={idx}
+            type="button"
             className="border px-4 py-2 m-1 rounded hover:bg-gray-200"
-            onClick={() => {
+            onClick={(event) => {
+              event.preventDefault();
               dispatch({
                 type: "ANSWER",
                 correct: option === currentQuestion.correct,
@@ -135,7 +137,6 @@ export default function QuizPage() {
           </button>
         ))}
       </form>
-      
     </div>
   );
 }
