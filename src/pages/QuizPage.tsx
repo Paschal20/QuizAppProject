@@ -47,6 +47,7 @@ const initialState: State = { index: 0, score: 0 };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
+    //our case
     case "ANSWER":
       return {
         ...state,
