@@ -82,7 +82,7 @@ export default function LeaderboardPage() {
           Sort: Lowest to Highest
         </button>
       </div>
-
+      {/* {dfgbhnm} */}
       {/* Clear leaderboard button */}
       <button
         onClick={clearLeaderboard}
@@ -131,6 +131,7 @@ export default function LeaderboardPage() {
                   >
                     Delete
                   </button>
+                  
                 </td>
               </tr>
             ))
