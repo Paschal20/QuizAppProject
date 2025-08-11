@@ -118,7 +118,7 @@ export default function QuizPage() {
       <h2 className="text-xl mb-2">Time: {time}s</h2>
       <h1 className="text-2xl mb-4 text-center">{currentQuestion.question}</h1>
 
-      <div className="flex flex-col w-full max-w-md">
+      <form className="flex flex-col w-full max-w-md">
         {currentQuestion.options.map((option, idx) => (
           <button
             key={idx}
@@ -134,7 +134,8 @@ export default function QuizPage() {
             {option}
           </button>
         ))}
-      </div>
+      </form>
+      
     </div>
   );
 }
